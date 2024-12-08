@@ -1,18 +1,13 @@
-#!/usr/bin/python
-from lib.main import *
-from lib.payloadextras import *
-from lib.startmetasploit import *
-from lib.menu import *
+#!/usr/bin/python3
+from lib.menu import getAndRunMainMenu
+import blessed
+import sys
+import subprocess
+import os
 
 
-try:
-    from lib.psexecspray import *
-except:
-    print t.bold_red + "[!] Rerun the setup.sh" + t.normal
+t = blessed.Terminal()
 
-if not re.search('winpayloads', os.getcwd().lower()):
-    print t.bold_red + "[!!] Please Run From Winpayloads Dir" + t.normal
-    sys.exit(1)
 
 DIR = os.path.expanduser('~') + '/winpayloads'
 if not os.path.isdir(DIR):
@@ -20,30 +15,25 @@ if not os.path.isdir(DIR):
 
 
 try:
-    print t.bold_green + "Checking if up-to-date || ctr + c to cancel" + t.normal
+    print(t.bold_green + "Checking if up-to-date || ctr + c to cancel" + t.normal)
     gitrev = subprocess.check_output(['git', 'rev-parse', 'HEAD']).rstrip()
     gitlsremote = subprocess.check_output(['git', 'ls-remote', 'origin', 'master']).split()[0]
     if gitrev != gitlsremote:
-        updateornah = raw_input(t.bold_red + "Do you want to update WinPayloads? y/[n]: " + t.normal)
+        updateornah = input(t.bold_red + "Do you want to update WinPayloads? y/[n]: " + t.normal)
         if updateornah.lower() == "y":
-            p = subprocess.Popen(['git','pull'])
+            p = subprocess.Popen(['git', 'pull'])
             p.wait()
-            print t.bold_yellow + "Reload Winpayloads..." + t.normal
+            print(t.bold_yellow + "Reload Winpayloads..." + t.normal)
             sys.exit()
 except subprocess.CalledProcessError:
-    print  t.bold_red + "[!] No Connection to Github" + t.normal
+    print(t.bold_red + "[!] No Connection to Github" + t.normal)
 except KeyboardInterrupt:
     pass
-
-
-from lib.listener import StartAsync
-async = StartAsync()
-async.start()
 
 try:
     getAndRunMainMenu()
 except KeyboardInterrupt:
-    print t.bold_green + '\n[*] Cleaning Up\n' + t.normal
+    print(t.bold_green + '\n[*] Cleaning Up\n' + t.normal)
     subprocess.call(['rm *.rc'], shell=True,
                     stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     subprocess.call(['rm *.ps1'], shell=True,

